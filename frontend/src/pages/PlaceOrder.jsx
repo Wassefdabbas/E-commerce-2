@@ -55,6 +55,7 @@ const PlaceOrder = () => {
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <input
+              autoComplete='off'
               type="text"
               name="firstName"
               placeholder="First Name"
@@ -64,6 +65,7 @@ const PlaceOrder = () => {
               required
             />
             <input
+              autoComplete='off'
               type="text"
               name="lastName"
               placeholder="Last Name"
@@ -73,6 +75,7 @@ const PlaceOrder = () => {
               required
             />
             <input
+              autoComplete='off'
               type="email"
               name="email"
               placeholder="Email Address"
@@ -83,6 +86,7 @@ const PlaceOrder = () => {
               required
             />
             <input
+              autoComplete='off'
               type="text"
               name="street"
               placeholder="Street Address"
@@ -92,6 +96,7 @@ const PlaceOrder = () => {
               required
             />
             <input
+              autoComplete='off'
               type="text"
               name="city"
               placeholder="City"
@@ -102,6 +107,7 @@ const PlaceOrder = () => {
             />
             <input
               type="text"
+              autoComplete='off'
               name="country"
               placeholder="Country"
               value={formData.country}
@@ -110,6 +116,7 @@ const PlaceOrder = () => {
               required
             />
             <input
+              autoComplete='off'
               type="tel"
               name="phone"
               placeholder="Phone Number"

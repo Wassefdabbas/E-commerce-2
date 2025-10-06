@@ -2,11 +2,11 @@ import { useState } from "react";
 import ShopContext from "./ShopContext";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import axios from 'axios'
+import axios from "axios";
 import { useEffect } from "react";
 import { useMemo } from "react";
 
-const FAVORITES_KEY = import.meta.env.VITE_FAVORITES_KEY
+const FAVORITES_KEY = import.meta.env.VITE_FAVORITES_KEY;
 
 const isProductOnOffer = (p) => {
   if (!p) return false;
@@ -19,62 +19,131 @@ const isProductOnOffer = (p) => {
 };
 
 const ShopContextProvider = ({ children }) => {
-  const backendUrl = import.meta.env.VITE_BACKEND_URL
-  const [products, setProducts] = useState([])
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
+  const [products, setProducts] = useState([]);
 
   const [cartItems, setCartItems] = useState({});
   const [search, setSearch] = useState("");
   const [showSearch, setShowSearch] = useState(false);
 
   const [favoriteItems, setFavoriteItems] = useState([]);
-  const [token, setToken] = useState('');
+  const [token, setToken] = useState("");
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
-  const addToCart = (itemId, size) => {
+  // Add to Cart
+  const addToCart = async (itemId, size) => {
     if (!size) {
-      toast.error('Please select a product size');
+      toast.error("Please select a product size");
       return;
     }
+
     setCartItems((prev) => {
       const newCart = structuredClone(prev);
-      if (!newCart[itemId]) {
-        newCart[itemId] = {};
-      }
+      if (!newCart[itemId]) newCart[itemId] = {};
       newCart[itemId][size] = (newCart[itemId][size] || 0) + 1;
       return newCart;
     });
-  };
 
-  const removeFromCart = (itemId, size) => {
-    setCartItems((prev) => {
-      const newCart = structuredClone(prev);
+    if (!token) return;
 
-      if (newCart[itemId] && newCart[itemId][size] > 1) {
-        newCart[itemId][size] -= 1;
+    try {
+      const response = await axios.post(
+        `${backendUrl}/api/cart/addToCart`,
+        { itemId, size },
+        { withCredentials: true }
+      );
+      if (response.data.success) {
+        setCartItems(response.data.cartData); // sync with backend cart
+      } else {
+        toast.error(response.data.message);
       }
-      return newCart;
-    });
+    } catch (error) {
+      console.error(error);
+      toast.error(error.response?.data?.message || error.message);
+    }
   };
 
-  const removeItemFromCart = (itemId, size) => {
+  // Update Quantity
+  const updateQuantity = async (itemId, size, quantity) => {
+    let cartData = structuredClone(cartItems);
+    cartData[itemId][size] = quantity;
+    setCartItems(cartData);
+
+    if (token) {
+      try {
+        await axios.post(
+          `${backendUrl}/api/cart/updateCart`,
+          { itemId, size, quantity },
+          { withCredentials: true }
+        );
+      } catch (error) {
+        console.log(error);
+        toast.error(error.message);
+      }
+    }
+  };
+
+  // const removeFromCart = (itemId, size) => {
+  //   setCartItems((prev) => {
+  //     const newCart = structuredClone(prev);
+
+  //     if (newCart[itemId] && newCart[itemId][size] > 1) {
+  //       newCart[itemId][size] -= 1;
+  //     }
+  //     return newCart;
+  //   });
+  // };
+
+  const removeItemFromCart = async (itemId, size) => {
     setCartItems((prev) => {
       const newCart = structuredClone(prev);
-      // Check if the product and size exist
       if (newCart[itemId] && newCart[itemId][size]) {
-        // Delete the size entry for that product
         delete newCart[itemId][size];
-        // If the product now has no sizes, delete the product entry itself
-        if (Object.keys(newCart[itemId]).length === 0) {
-          delete newCart[itemId];
-        }
+        if (Object.keys(newCart[itemId]).length === 0) delete newCart[itemId];
       }
       return newCart;
     });
+
+    if (!token) return;
+
+    try {
+      const response = await axios.post(
+        `${backendUrl}/api/cart/removeItem`,
+        { itemId, size },
+        { withCredentials: true }
+      );
+      if (response.data.success) {
+        setCartItems(response.data.cartData);
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error(error.response?.data?.message || error.message);
+    }
   };
 
-  const clearCart = () => {
+  const clearCart = async () => {
     setCartItems({});
+
+    if (!token) return;
+
+    try {
+      const response = await axios.post(
+        `${backendUrl}/api/cart/clearCart`,
+        {},
+        { withCredentials: true }
+      );
+      if (response.data.success) {
+        setCartItems(response.data.cartData);
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error(error.response?.data?.message || error.message);
+    }
   };
 
   const getCartCount = () => {
@@ -94,7 +163,9 @@ const ShopContextProvider = ({ children }) => {
         const quantity = cartItems[itemId][size];
         const product = products.find((p) => String(p._id) === itemId);
         if (product) {
-          const price = isProductOnOffer(product) ? product.offerPrice : product.price;
+          const price = isProductOnOffer(product)
+            ? product.offerPrice
+            : product.price;
           totalAmount += price * quantity;
         }
       }
@@ -104,22 +175,44 @@ const ShopContextProvider = ({ children }) => {
 
   const getProductData = async () => {
     try {
-      const response = await axios.get(`${backendUrl}/api/products`)
-      if(response.data.success){
-        setProducts(response.data.products)
+      const response = await axios.get(`${backendUrl}/api/products`);
+      if (response.data.success) {
+        setProducts(response.data.products);
+      } else {
+        toast.error(response.data.message);
       }
-      else {
-        toast.error(response.data.message)
-      }
-    } catch(error) {
-      console.log(error)
-      toast.error(error.message)
+    } catch (error) {
+      console.log(error);
+      toast.error(error.message);
     }
-  }
+  };
+
+  const getUserCart = async () => {
+    try {
+      const response = await axios.get(`${backendUrl}/api/cart/getCart`, {
+        withCredentials: true,
+      });
+      if (response.data.success) {
+        setCartItems(response.data.cartData);
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error.message);
+    }
+  };
 
   useEffect(() => {
-    getProductData()
-  }, [])
+    getProductData();
+  }, []);
+
+  useEffect(() => {
+    if (!token && localStorage.getItem("token")) {
+      setToken(localStorage.getItem("token"));
+      getUserCart();
+    }
+  }, []);
 
   // Favorites from LocalStorage
   useEffect(() => {
@@ -139,7 +232,7 @@ const ShopContextProvider = ({ children }) => {
     const isFavorite = favoriteItems.includes(productId);
 
     if (isFavorite) {
-      updatedFavorites = favoriteItems.filter(id => id !== productId);
+      updatedFavorites = favoriteItems.filter((id) => id !== productId);
     } else {
       updatedFavorites = [...favoriteItems, productId];
     }
@@ -151,12 +244,11 @@ const ShopContextProvider = ({ children }) => {
   const activeFavoriteIds = useMemo(() => {
     // First, create a fast-lookup Set of all active product IDs
     const activeProductIds = new Set(
-      products.filter(p => p.isActive).map(p => p._id)
+      products.filter((p) => p.isActive).map((p) => p._id)
     );
     // Then, filter the user's "master list" of favorites.
     // Only keep a favorite if its ID exists in the activeProductIds Set.
-    return favoriteItems.filter(id => activeProductIds.has(id));
-
+    return favoriteItems.filter((id) => activeProductIds.has(id));
   }, [products, favoriteItems]);
 
   const value = {
@@ -168,7 +260,8 @@ const ShopContextProvider = ({ children }) => {
     showSearch,
     setShowSearch,
     addToCart,
-    removeFromCart,
+    updateQuantity,
+    // removeFromCart,
     clearCart,
     getCartCount,
     getTotalAmount,

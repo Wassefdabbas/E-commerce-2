@@ -208,59 +208,6 @@ export const createProduct = async (req, res) => {
   }
 };
 
-// @desc    Update product
-// @route   PUT /api/products/:id
-// @access  Admin
-// export const updateProduct = async (req, res) => {
-//   try {
-//     const product = await Product.findById(req.params.id);
-//     if (!product) {
-//       return res.status(404).json({ message: 'Product not found' });
-//     }
-
-//     // Handle new images
-//     if (req.files && req.files.length > 0) {
-//       // Delete old images
-//       if (product.imagePublicIds && product.imagePublicIds.length > 0) {
-//         await cloudinary.api.delete_resources(product.imagePublicIds);
-//       }
-//       const newImages = req.files.map(file => file.path);
-//       const newImagePublicIds = req.files.map(file => file.filename);
-//       product.images = newImages;
-//       product.imagePublicIds = newImagePublicIds;
-//     }
-
-//     // Parse arrays from body
-//     const { size, tags, offer, offerStartDate, offerEndDate, ...otherFields } = req.body;
-//     const parsedSize = parseArrayField(size);
-//     const parsedTags = parseArrayField(tags);
-
-//     // Validate dates if offer changed
-//     if (offer && offer > 0) {
-//       if (!offerStartDate || !offerEndDate || new Date(offerStartDate) >= new Date(offerEndDate)) {
-//         return res.status(400).json({ message: 'Invalid offer dates' });
-//       }
-//     }
-
-//     // Update fields
-//     Object.assign(product, {
-//       ...otherFields,
-//       size: parsedSize.length > 0 ? parsedSize : product.size,
-//       tags: parsedTags.length > 0 ? parsedTags : product.tags,
-//       offer: offer ? Number(offer) : product.offer,
-//       offerStartDate: offerStartDate ? new Date(offerStartDate) : product.offerStartDate,
-//       offerEndDate: offerEndDate ? new Date(offerEndDate) : product.offerEndDate,
-//     });
-
-//     const updatedProduct = await product.save();
-//     res.json(updatedProduct);
-//   } catch (error) {
-//     res.status(400).json({ message: 'Error updating product', error: error.message });
-//   }
-// };
-
-// In productController.js
-
 export const updateProduct = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);

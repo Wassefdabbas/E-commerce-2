@@ -109,7 +109,6 @@ export const registerUser = async (req, res) => {
     }
 }
 
-
 // USER LOGIN CONTROLLER
 export const loginUser = async (req, res) => {
     try {
