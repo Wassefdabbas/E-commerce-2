@@ -1,25 +1,10 @@
-import React, { useState } from "react";
-// import { products as productsData } from "../assets/frontend_assets/assets";
+import { useState } from "react";
 import ShopContext from "./ShopContext";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import axios from 'axios'
 import { useEffect } from "react";
 import { useMemo } from "react";
-
-// const normalizeProduct = (p) => {
-//   const ageCategory = p.ageCategory || p.category;
-//   const derivedCategory =
-//     p.category && !p.subCategory
-//       ? p.category
-//       : (p.subCategory || "").toLowerCase();
-//   return {
-//     ...p,
-//     ageCategory,
-//     category: derivedCategory || p.category || "",
-//     isActive: typeof p.isActive === "boolean" ? p.isActive : true,
-//   };
-// };
 
 const FAVORITES_KEY = import.meta.env.VITE_FAVORITES_KEY
 
@@ -37,7 +22,6 @@ const ShopContextProvider = ({ children }) => {
   const backendUrl = import.meta.env.VITE_BACKEND_URL
   const [products, setProducts] = useState([])
 
-  // const [products] = useState(() => (productsData || []).map(normalizeProduct));
   const [cartItems, setCartItems] = useState({});
   const [search, setSearch] = useState("");
   const [showSearch, setShowSearch] = useState(false);

@@ -2,13 +2,12 @@ import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import ShopContext from "../context/ShopContext";
 import RelatedProduct from "../components/RelatedProduct";
-import { Star } from "lucide-react";
+import { Star, ShoppingCart } from "lucide-react";
 const Product = () => {
   const { id } = useParams();
-  // TODO: ADD TO CART
-  // const { products, addToCart, isProductOnOffer, currency } = useContext(ShopContext);
   const {
     products,
+    addToCart,
     isProductOnOffer,
     currency,
     favoriteItems,
@@ -124,13 +123,12 @@ const Product = () => {
             </div>
           </div>
 
-          {/* TODO: ADD TO CART */}
-          {/* <button
+          <button
             onClick={() => addToCart(productData._id, size)}
-            className="bg-black text-white text-sm py-3 px-8 active:bg-gray-700 cursor-pointer"
+            className="mb-4 bg-black text-white text-sm py-3 px-8 flex gap-3 active:bg-gray-700 cursor-pointer"
           >
-            ADD TO CART
-          </button> */}
+            ADD TO CART <ShoppingCart />
+          </button>
 
           <button
             onClick={handleFavoriteClick}

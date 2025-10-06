@@ -10,12 +10,12 @@ import About from "./pages/About";
 import Footer from "./components/Footer";
 // import Offers from './pages/Offers'
 import SearchBar from "./components/SearchBar";
-// import Cart from './pages/Cart'
+import Cart from './pages/Cart'
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-// import PlaceOrder from "./pages/PlaceOrder";
-// import Orders from "./pages/Orders";
+import PlaceOrder from "./pages/PlaceOrder";
+import Orders from "./pages/Orders";
 import Favorites from "./pages/Favorites";
 
 const App = () => {
@@ -34,9 +34,9 @@ const App = () => {
         <Route path="/product/:id" element={<Product />} />
 
         {/* <Route path='/offers' element={<Offers />}/> */}
-        {/* <Route path='/cart' element={<Cart />}/> */}
-        {/* <Route path="/place-order" element={<PlaceOrder />} /> */}
-        {/* <Route path="/orders" element={<Orders />} /> */}
+        <Route path='/cart' element={<Cart />}/>
+        <Route path="/place-order" element={<PlaceOrder />} />
+        <Route path="/orders" element={<Orders />} />
       </Routes>
 
       <Footer />

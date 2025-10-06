@@ -8,9 +8,7 @@ import {Star} from 'lucide-react'
 
 const Navbar = () => {
   const [visible, setVisible] = useState(false);
-  //TODO: CART HERE
-  // const { setShowSearch, getCartCount } = useContext(ShopContext);
-  const { setShowSearch, activeFavoriteIds } = useContext(ShopContext);
+  const { setShowSearch, activeFavoriteIds, getCartCount } = useContext(ShopContext);
 
   return (
     <div className="flex items-center justify-between py-5 font-medium">
@@ -66,14 +64,14 @@ const Navbar = () => {
             </div>
           </div>
         </div> */}
-        {/* <Link to="/cart">
+        <Link to="/cart">
           <div className="relative">
             <img src={assets.cart_icon} className="w-5 min-w-5" alt="Cart" />
             <p className="absolute right-[-5px] bottom-[-5px] w-4 text-center leading-4 bg-black text-white aspect-square rounded-full text-[8px]">
               {getCartCount()}
             </p>
           </div>
-        </Link> */}
+        </Link>
         <Link to="/favorites" className="relative">
           <Star />
           {activeFavoriteIds.length > 0 && (
