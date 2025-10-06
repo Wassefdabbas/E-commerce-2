@@ -20,8 +20,9 @@ import Favorites from "./pages/Favorites";
 
 const App = () => {
   return (
-    <div className="px-4 sm:px-[Svw] md:px-[7vw] lg:px-[9vw]">
-      <ToastContainer />
+    <div className="px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw]">
+      <ToastContainer   position="top-left"
+  reverseOrder={false} />
       <Navbar />
       <SearchBar />
       <Routes>

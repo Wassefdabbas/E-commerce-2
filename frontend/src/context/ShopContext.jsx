@@ -27,6 +27,7 @@ const ShopContextProvider = ({ children }) => {
   const [showSearch, setShowSearch] = useState(false);
 
   const [favoriteItems, setFavoriteItems] = useState([]);
+  const [token, setToken] = useState('');
 
   const navigate = useNavigate()
 
@@ -101,7 +102,6 @@ const ShopContextProvider = ({ children }) => {
     return totalAmount;
   };
 
-
   const getProductData = async () => {
     try {
       const response = await axios.get(`${backendUrl}/api/products`)
@@ -158,9 +158,11 @@ const ShopContextProvider = ({ children }) => {
     return favoriteItems.filter(id => activeProductIds.has(id));
 
   }, [products, favoriteItems]);
+
   const value = {
     products,
     cartItems,
+    setCartItems,
     search,
     setSearch,
     showSearch,
@@ -177,7 +179,9 @@ const ShopContextProvider = ({ children }) => {
     backendUrl,
     favoriteItems,
     toggleFavorite,
-    activeFavoriteIds
+    activeFavoriteIds,
+    token,
+    setToken,
   };
 
   return <ShopContext.Provider value={value}>{children}</ShopContext.Provider>;

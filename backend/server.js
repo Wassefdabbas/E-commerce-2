@@ -12,8 +12,8 @@ import dashboardRoutes from "./routes/dashboardRoutes.js";
 const app = express();
 const PORT = process.env.PORT || 5001;
 const allowedOrigins = [
-    "http://localhost:5175",
-    "http://localhost:5176",
+    "http://localhost:5173",
+    "http://localhost:5174",
     // "https://e-commerce-frontend-snowy-rho.vercel.app",
     // "https://e-commerce-admin-three-wine.vercel.app"
   ];

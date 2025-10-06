@@ -60,22 +60,22 @@ export const registerUser = async (req, res) => {
 
     try {
         if (!name || !email || !password) {
-            return res.status(400).json({ message: "All fields are Required" })
+            return res.status(400).json({success: false, message: "All fields are Required" })
         }
 
         if (password.length < 8) {
-            return res.status(400).json({ message: "Password must be at least 8 characters" })
+            return res.status(400).json({success: false, message: "Password must be at least 8 characters" })
         }
 
         // Regular Expression for check from the shape of email that has @
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
-            return res.status(400).json({ message: "Invalid email format" });
+            return res.status(400).json({success: false, message: "Invalid email format" });
         }
 
         const existingUser = await User.findOne({ email });
         if (existingUser) {
-            return res.status(400).json({ message: "Email already existing, please use a different one" })
+            return res.status(400).json({success: false, message: "Email already existing, please use a different one" })
         }
 
         // create the new User
@@ -98,14 +98,14 @@ export const registerUser = async (req, res) => {
             maxAge: 7 * 24 * 60 * 60 * 1000, // 7 day in millie Secund
             httpOnly: true, // prevent XSS attacks // can't access cookie from JavaScript
             sameSite: isProd ? "none" : "lax", // prevent CSRF attacks // Prevents the browser from sending cookies in cross-site requests
-            secure: process.env.NODE_ENV === "production"
+            secure: isProd
         })
 
-        res.status(201).json({ success: true, user: userData, message: "Creating New User" })
+        res.status(201).json({ success: true, user: userData, token, message: "Creating New User" })
 
     } catch (error) {
         console.log("Error in signup controller", error)
-        res.status(500).json({ message: "Server Error" })
+        res.status(500).json({success: false, message: "Server Error" })
     }
 }
 
@@ -116,17 +116,17 @@ export const loginUser = async (req, res) => {
         const { email, password } = req.body
 
         if (!email || !password) {
-            return res.status(400).json({ message: "All fields are Required" })
+            return res.status(400).json({success: false, message: "All fields are Required" })
         }
 
         const user = await User.findOne({ email })
         if (!user) {
-            return res.status(401).json({ message: "Invalid Email or Password" })
+            return res.status(401).json({success: false, message: "Invalid Email or Password" })
         }
 
         const isPasswordCorrect = await user.matchPassword(password)
         if (!isPasswordCorrect) {
-            return res.status(401).json({ message: "Invalid Email or Password" })
+            return res.status(401).json({success: false, message: "Invalid Email or Password" })
         }
 
         // create the token and cookie
@@ -146,10 +146,10 @@ export const loginUser = async (req, res) => {
 
         const userData = user.toObject()
         delete userData.password
-        res.status(200).json({ success: true, user: userData })
+        res.status(200).json({ success: true, token, user: userData })
     } catch (error) {
         console.log("Error in login controller", error)
-        res.status(500).json({ message: "Server Error" })
+        res.status(500).json({success: false, message: "Server Error" })
     }
 }
 

@@ -1,51 +1,89 @@
 // src/pages/Login.jsx
 
-import React, { useState, useContext } from "react"; // 1. Import useContext
+import React, { useState, useContext, useEffect } from "react";
 import { Eye, EyeOff } from "lucide-react";
-import { useNavigate } from "react-router-dom"; // 2. Import hooks for navigation
-import { toast } from "react-toastify"; // and notifications
-import ShopContext from "../context/ShopContext"; // and your context
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import ShopContext from "../context/ShopContext";
+import axios from "axios";
 
 const Login = () => {
+  const navigate = useNavigate();
   const [currState, setCurrState] = useState("Login");
   const [showPassword, setShowPassword] = useState(false);
+  const { token, setToken, backendUrl } = useContext(ShopContext);
 
-  // 3. Add state to hold the data from the input fields
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-  });
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  // 4. Get login function from context and initialize navigate
-  const { login } = useContext(ShopContext);
-  const navigate = useNavigate();
-
-  // 5. This function updates the state as the user types
-  const onChangeHandler = (event) => {
-    setFormData({ ...formData, [event.target.name]: event.target.value });
-  };
+  const [isLoading, setIsLoading] = useState(false);
 
   const onSubmitHandler = async (event) => {
+    setIsLoading(true);
     event.preventDefault();
-
-    if (currState === "Sign Up") {
-      if (!formData.name || !formData.email || !formData.password) {
-        toast.error("Please fill in all fields.");
-        return;
+    try {
+      if (currState === "Login") {
+        const response = await axios.post(
+          `${backendUrl}/api/auth/userlogin`,
+          {
+            email,
+            password,
+          },
+          { withCredentials: true }
+        );
+        if (response.data.success) {
+          setToken(response.data.token);
+          localStorage.setItem("token", response.data.token);
+          toast.success("Logged in Successfully");
+        } else {
+          toast.error(response.data.message || "Login failed");
+        }
+      } else {
+        const response = await axios.post(
+          `${backendUrl}/api/auth/register`,
+          {
+            name,
+            email,
+            password,
+          },
+          { withCredentials: true }
+        );
+        if (response.data.success) {
+          setToken(response.data.token);
+          localStorage.setItem("token", response.data.token);
+          toast.success("Registered Successfully");
+        } else {
+          toast.error(response.data.message || "Registration failed");
+        }
       }
-      login({ name: formData.name, email: formData.email });
-      navigate("/");
-    } else {
-      // Login state
-      if (!formData.email || !formData.password) {
-        toast.error("Please enter email and password.");
-        return;
+    } catch (error) {
+      console.log(error);
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error(error.message);
       }
-      login({ email: formData.email });
-      navigate("/");
+    } finally {
+      setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (token) {
+      navigate("/");
+    }
+  }, [token]);
+
+  useEffect(() => {
+    if (!token && localStorage.getItem("token")) {
+      setToken(localStorage.getItem("token"));
+    }
+  }, []);
 
   return (
     <form
@@ -63,8 +101,8 @@ const Login = () => {
       {currState === "Sign Up" && (
         <input
           name="name" // Added name
-          value={formData.name} // Added value
-          onChange={onChangeHandler} // Added onChange
+          value={name} // Added value
+          onChange={(e) => setName(e.target.value)}
           type="text"
           className="w-full py-3 px-3 border border-gray-800"
           placeholder="Name"
@@ -74,9 +112,9 @@ const Login = () => {
 
       {/* Email */}
       <input
-        name="email" // Added name
-        value={formData.email} // Added value
-        onChange={onChangeHandler} // Added onChange
+        name="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
         type="email"
         className="w-full py-3 px-3 border border-gray-800"
         placeholder="Email"
@@ -86,9 +124,9 @@ const Login = () => {
       {/* Password with show/hide toggle */}
       <div className="relative w-full">
         <input
-          name="password" // Added name
-          value={formData.password} // Added value
-          onChange={onChangeHandler} // Added onChange
+          name="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
           type={showPassword ? "text" : "password"}
           className="w-full py-3 px-3 border border-gray-800 pr-10"
           placeholder="Password"
@@ -119,9 +157,28 @@ const Login = () => {
       </div>
 
       {/* Submit button */}
-      <button className="bg-black text-white font-normal px-8 py-2 mt-4 cursor-pointer">
-        {currState === "Login" ? "Sign In" : "Sign Up"}
-      </button>
+
+<div className="flex justify-center mt-4">
+    <button
+        className="w-50 max-w-sm py-2 px-4 text-white bg-black hover:bg-gray-800 transition-colors flex items-center justify-center disabled:bg-gray-500 relative cursor-pointer"
+        type="submit"
+        disabled={isLoading}
+    >
+        {isLoading ? (
+            <svg 
+                className="animate-spin h-5 w-5 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none" 
+                viewBox="0 0 24 24"
+            >
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+        ) : (
+            currState === 'Login' ? 'Login' : 'Sign Up'
+        )}
+    </button>
+</div>
     </form>
   );
 };

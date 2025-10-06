@@ -188,7 +188,7 @@ const Collections = () => {
                 {filteredAndSorted.length} items
               </span>
               <select
-                className="border rounded px-3 py-2"
+                className="border rounded px-4 py-2"
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
               >
