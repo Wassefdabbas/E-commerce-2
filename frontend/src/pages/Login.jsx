@@ -147,7 +147,7 @@ const Login = () => {
 
       {/* Links */}
       <div className="w-full flex justify-between text-sm mt-[-8px]">
-        <p className="cursor-pointer">Forgot your password?</p>
+        {/* <p className="cursor-pointer">Forgot your password?</p> */}
         {currState === "Login" ? (
           <p className="cursor-pointer" onClick={() => setCurrState("Sign Up")}>
             Create Account

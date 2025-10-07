@@ -195,7 +195,7 @@ const Orders = () => {
                   {order.status || "Pending"}
                 </span>
                 <div className="flex gap-2">
-                  {["pending", "processing", "shipped", "delivered"].map(
+                  {["pending", "processing", "shipped", "delivered", "cancelled"].map(
                     (status) =>
                       order.status !== status && (
                         <button
