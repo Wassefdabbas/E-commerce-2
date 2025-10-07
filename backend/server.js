@@ -16,8 +16,8 @@ const PORT = process.env.PORT || 5001;
 const allowedOrigins = [
     "http://localhost:5173",
     "http://localhost:5174",
-    // "https://e-commerce-frontend-snowy-rho.vercel.app",
-    // "https://e-commerce-admin-three-wine.vercel.app"
+    "https://fulle-commerceuser.vercel.app",
+    "https://fulle-commerceadmin.vercel.app"
   ];
 app.use(cors({
     origin: function(origin, callback) {
