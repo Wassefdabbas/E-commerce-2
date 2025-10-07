@@ -16,10 +16,10 @@ const Sidebar = () => {
         <p className="hidden md:block">List Items</p>
       </NavLink>
 
-      {/* <NavLink className='flex items-center gap-3 border border-gray-300 border-r-0 py-2 px-3 rounded-l' to="/orders">
+      <NavLink className='flex items-center gap-3 border border-gray-300 border-r-0 py-2 px-3 rounded-l' to="/listOrders">
         <img src={assets.order_icon} className="w-5 h-5" alt="" />
         <p className="hidden md:block">Orders</p>
-      </NavLink> */}
+      </NavLink>
 
       {/* TODO AI gen image */}
       {/* <NavLink className='flex items-center gap-3 border border-gray-300 border-r-0 py-2 px-3 rounded-l' to="/orders">

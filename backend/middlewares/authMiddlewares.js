@@ -3,17 +3,17 @@ import Admin from "../models/Admin.js"
 
 export const protectRoute = async (req, res, next) => {
     try {
-        const token = req.cookies.token
+        const admin_token = req.cookies.admin_token
 
-        if (!token) {
-            return res.status(401).json({ message: "Unauthorized = No token provided" })
+        if (!admin_token) {
+            return res.status(401).json({ message: "Unauthorized = No admin_token provided" })
         }
 
         let decoded;
         try {
-          decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+          decoded = jwt.verify(admin_token, process.env.JWT_SECRET_KEY);
         } catch (err) {
-          return res.status(401).json({ success: false, message: "Unauthorized: Invalid or expired token" });
+          return res.status(401).json({ success: false, message: "Unauthorized: Invalid or expired admin_token" });
         }
 
         const admin = await Admin.findById(decoded.adminId).select("-password")
@@ -27,7 +27,7 @@ export const protectRoute = async (req, res, next) => {
         next();
     } catch (error) {
         console.log("Error in protectRoute middleware", error)
-        return res.status(401).json({ message: "Token expired or invalid" });
+        return res.status(401).json({ message: "admin_token expired or invalid" });
 
     }
 }

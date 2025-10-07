@@ -34,7 +34,7 @@ const ShopContextProvider = ({ children }) => {
   // Add to Cart
   const addToCart = async (itemId, size) => {
     if (!size) {
-      toast.error("Please select a product size");
+      toast.info("Please select a product size");
       return;
     }
 
@@ -83,17 +83,6 @@ const ShopContextProvider = ({ children }) => {
       }
     }
   };
-
-  // const removeFromCart = (itemId, size) => {
-  //   setCartItems((prev) => {
-  //     const newCart = structuredClone(prev);
-
-  //     if (newCart[itemId] && newCart[itemId][size] > 1) {
-  //       newCart[itemId][size] -= 1;
-  //     }
-  //     return newCart;
-  //   });
-  // };
 
   const removeItemFromCart = async (itemId, size) => {
     setCartItems((prev) => {
@@ -261,7 +250,6 @@ const ShopContextProvider = ({ children }) => {
     setShowSearch,
     addToCart,
     updateQuantity,
-    // removeFromCart,
     clearCart,
     getCartCount,
     getTotalAmount,

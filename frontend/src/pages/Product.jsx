@@ -1,10 +1,12 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ShopContext from "../context/ShopContext";
 import RelatedProduct from "../components/RelatedProduct";
 import { Star, ShoppingCart } from "lucide-react";
+import { toast } from "react-toastify";
 const Product = () => {
   const { id } = useParams();
+    const navigate = useNavigate();
   const {
     products,
     addToCart,
@@ -12,6 +14,8 @@ const Product = () => {
     currency,
     favoriteItems,
     toggleFavorite,
+    user,
+    token,
   } = useContext(ShopContext);
   const [productData, setProductData] = useState(null);
   const [image, setImage] = useState("");
@@ -40,6 +44,16 @@ const Product = () => {
     e.preventDefault();
     e.stopPropagation();
     toggleFavorite(id);
+  };
+
+  const isLoggedIn = Boolean(user || token);
+    const handleAddToCartClick = () => {
+    if (!isLoggedIn) {
+      toast.info("Please login to add items to cart");
+      navigate("/login");
+      return;
+    }
+    addToCart(productData._id, size);
   };
 
   const isOnOffer = isProductOnOffer(productData);
@@ -124,7 +138,7 @@ const Product = () => {
           </div>
 
           <button
-            onClick={() => addToCart(productData._id, size)}
+            onClick={handleAddToCartClick}
             className="mb-4 bg-black text-white text-sm py-3 px-8 flex gap-3 active:bg-gray-700 cursor-pointer"
           >
             ADD TO CART <ShoppingCart />

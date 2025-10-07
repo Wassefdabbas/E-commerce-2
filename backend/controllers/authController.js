@@ -24,14 +24,14 @@ export const login = async (req, res) => {
         }
 
         // create the token and cookie
-        const token = jwt.sign(
+        const admin_token = jwt.sign(
             { adminId: admin._id },
             process.env.JWT_SECRET_KEY,
             { expiresIn: "7d" }
         )
 
         const isProd = process.env.NODE_ENV === "production"
-        res.cookie("token", token, {
+        res.cookie("admin_token", admin_token, {
             maxAge: 7 * 24 * 60 * 60 * 1000,
             httpOnly: true,
             sameSite: isProd ? "none" : "lax",
@@ -49,7 +49,7 @@ export const login = async (req, res) => {
 
 //  LOG-OUT CONTROLLER //
 export const logout = (req, res) => {
-    res.clearCookie("token")
+    res.clearCookie("admin_token")
     res.status(200).json({ success: true, message: "Logout successfully" })
 }
 

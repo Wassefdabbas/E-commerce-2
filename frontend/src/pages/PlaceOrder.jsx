@@ -1,22 +1,34 @@
-import React, { useContext, useState } from 'react';
-import ShopContext from '../context/ShopContext';
-import Title from '../components/Title';
-import { assets } from '../assets/frontend_assets/assets';
+import React, { useContext, useState } from "react";
+import ShopContext from "../context/ShopContext";
+import Title from "../components/Title";
+import axios from "axios";
+import { toast } from "react-toastify";
+// import { assets } from '../assets/frontend_assets/assets';
 
 const PlaceOrder = () => {
-  const { getTotalAmount, currency, clearCart, navigate } = useContext(ShopContext);
+  const {
+    getTotalAmount,
+    currency,
+    clearCart,
+    navigate,
+    // token,
+    backendUrl,
+    cartItems,
+    setCartItems,
+    products,
+  } = useContext(ShopContext);
 
-  const [paymentMethod, setPaymentMethod] = useState('cod');
+  const [paymentMethod, setPaymentMethod] = useState("cod");
 
   // Shipping form state
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    street: '',
-    city: '',
-    country: '',
-    phone: '',
+    firstName: "",
+    lastName: "",
+    email: "",
+    street: "",
+    city: "",
+    country: "",
+    phone: "",
   });
 
   const subtotal = getTotalAmount();
@@ -24,24 +36,70 @@ const PlaceOrder = () => {
   const total = subtotal + shippingFee;
 
   const handleChange = (e) => {
-    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    setFormData((data) => ({ ...data, [e.target.name]: e.target.value }));
   };
 
-  const handlePlaceOrder = (event) => {
+  const handlePlaceOrder = async (event) => {
     event.preventDefault();
-    // Send `formData` + `paymentMethod` to backend here
-    clearCart();
-    navigate('/orders');
+    try {
+      let orderItems = [];
+
+      for (const items in cartItems) {
+        for (const item in cartItems[items]) {
+          if (cartItems[items][item] > 0) {
+            const itemInfo = structuredClone(
+              products.find((product) => product._id === items)
+            );
+            if (itemInfo) {
+              itemInfo.size = item;
+              itemInfo.quantity = cartItems[items][item];
+              orderItems.push(itemInfo);
+            }
+          }
+        }
+      }
+
+      let orderData = {
+        address: formData,
+        amount: total,
+        items: orderItems,
+      };
+
+      switch (paymentMethod) {
+        case "cod": {
+          const response = await axios.post(
+            `${backendUrl}/api/orders/cod`,
+             orderData,
+            { withCredentials: true }
+          );
+          if (response.data.success) {
+            setCartItems({});
+            navigate("/orders");
+          }
+          else {
+            toast.error(response.data.message);
+          }
+          break;
+        }
+        // TODO: case 'stripe':
+        //   await placeOrderStripe(orderData);
+      }
+
+      clearCart();
+    } catch (error) {
+      console.error(error);
+      toast.error(error.message)
+    }
   };
 
   // Shared input classes
   const inputClasses =
-    'w-full p-3 border border-gray-300 rounded-md transition focus:border-gray-500 focus:ring-2 focus:ring-gray-300 outline-none';
+    "w-full p-3 border border-gray-300 rounded-md transition focus:border-gray-500 focus:ring-2 focus:ring-gray-300 outline-none";
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="text-2xl mb-8">
-        <Title text1={'Checkout'} text2={'Information'} />
+        <Title text1={"Checkout"} text2={"Information"} />
       </div>
 
       <form
@@ -55,7 +113,7 @@ const PlaceOrder = () => {
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <input
-              autoComplete='off'
+              autoComplete="off"
               type="text"
               name="firstName"
               placeholder="First Name"
@@ -65,7 +123,7 @@ const PlaceOrder = () => {
               required
             />
             <input
-              autoComplete='off'
+              autoComplete="off"
               type="text"
               name="lastName"
               placeholder="Last Name"
@@ -75,7 +133,7 @@ const PlaceOrder = () => {
               required
             />
             <input
-              autoComplete='off'
+              autoComplete="off"
               type="email"
               name="email"
               placeholder="Email Address"
@@ -86,7 +144,7 @@ const PlaceOrder = () => {
               required
             />
             <input
-              autoComplete='off'
+              autoComplete="off"
               type="text"
               name="street"
               placeholder="Street Address"
@@ -96,7 +154,7 @@ const PlaceOrder = () => {
               required
             />
             <input
-              autoComplete='off'
+              autoComplete="off"
               type="text"
               name="city"
               placeholder="City"
@@ -107,7 +165,7 @@ const PlaceOrder = () => {
             />
             <input
               type="text"
-              autoComplete='off'
+              autoComplete="off"
               name="country"
               placeholder="Country"
               value={formData.country}
@@ -116,7 +174,7 @@ const PlaceOrder = () => {
               required
             />
             <input
-              autoComplete='off'
+              autoComplete="off"
               type="tel"
               name="phone"
               placeholder="Phone Number"
@@ -175,7 +233,7 @@ const PlaceOrder = () => {
               Payment Method
             </h3>
             <div className="space-y-3">
-              <label
+              {/* <label
                 className={`flex items-center gap-3 p-3 border-2 rounded-lg cursor-pointer transition ${
                   paymentMethod === 'stripe'
                     ? 'border-blue-500 bg-blue-50'
@@ -209,20 +267,20 @@ const PlaceOrder = () => {
                   className="w-4 h-4 text-blue-600 focus:ring-blue-500"
                 />
                 <img src={assets.razorpay_logo} className="h-6" alt="Razorpay" />
-              </label>
+              </label> */}
 
               <label
                 className={`flex items-center gap-3 p-3 border-2 rounded-lg cursor-pointer transition ${
-                  paymentMethod === 'cod'
-                    ? 'border-blue-500 bg-blue-50'
-                    : 'border-gray-200'
+                  paymentMethod === "cod"
+                    ? "border-blue-500 bg-blue-50"
+                    : "border-gray-200"
                 }`}
               >
                 <input
                   type="radio"
                   name="payment"
                   value="cod"
-                  checked={paymentMethod === 'cod'}
+                  checked={paymentMethod === "cod"}
                   onChange={(e) => setPaymentMethod(e.target.value)}
                   className="w-4 h-4 text-blue-600 focus:ring-blue-500"
                 />

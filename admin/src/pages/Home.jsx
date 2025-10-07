@@ -1,9 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Package, PlusCircle, List } from 'lucide-react';
+import { Package, PlusCircle, List, ShoppingBag } from 'lucide-react';
 import { StatCard } from '../components/StatCard'; // Assuming StatCard is a separate component
 
-const Home = ({ productCount }) => {
+const Home = ({ productCount, orderCount }) => {
   return (
     <div className="p-4">
       {/* Header */}
@@ -20,6 +20,12 @@ const Home = ({ productCount }) => {
           value={productCount || 0} // 2. Use the prop here (with a fallback for 0)
           color="bg-orange-100"
         />
+        <StatCard
+          icon={<ShoppingBag className="text-green-800" size={24} />}
+          title="Total Orders"
+          value={orderCount || 0} // 2. Use the prop here (with a fallback for 0)
+          color="bg-green-100"
+        />
         {/* You can add more StatCards for orders, customers etc. here */}
       </div>
 
@@ -34,6 +40,10 @@ const Home = ({ productCount }) => {
           <Link to="/list" className="bg-gray-600 text-white p-4 rounded-lg flex items-center justify-center gap-2 hover:bg-gray-700 transition-colors">
             <List size={20} />
             <span>View All Products</span>
+          </Link>
+          <Link to="/listOrders" className="bg-gray-600 text-white p-4 rounded-lg flex items-center justify-center gap-2 hover:bg-gray-700 transition-colors">
+            <ShoppingBag size={20} />
+            <span>View All Orders</span>
           </Link>
         </div>
       </div>

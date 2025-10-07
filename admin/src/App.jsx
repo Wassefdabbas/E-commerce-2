@@ -7,10 +7,10 @@ import List from "./pages/List";
 import Edit from "./pages/Edit";
 import Home from "./pages/Home";
 import Login from "./components/Login";
+import ListOrders from "./pages/ListOrders";
 import axios from "axios";
 import { ToastContainer } from "react-toastify";
-import { backend_URL } from './config/config';
-
+import { backend_URL } from "./config/config";
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -19,7 +19,10 @@ const App = () => {
 
   const fetchProducts = async () => {
     try {
-      const response = await axios.get(backend_URL + "/api/products/admin/all", { withCredentials: true });
+      const response = await axios.get(
+        backend_URL + "/api/products/admin/all",
+        { withCredentials: true }
+      );
       if (response.data.success) {
         setProducts(response.data.products);
       }
@@ -28,14 +31,25 @@ const App = () => {
     }
   };
 
+  const [orders, setOrders] = useState([]);
+  const fetchOrders = async () => {
+    const res = await axios.post(backend_URL + "/api/orders/list", {}, {
+      withCredentials: true,
+    });
+    if (res.data.success) setOrders(res.data.orders);
+  };
+
   useEffect(() => {
     const checkLoginStatus = async () => {
       try {
-        await axios.get(backend_URL + "/api/auth/me", { withCredentials: true });
+        await axios.get(backend_URL + "/api/auth/me", {
+          withCredentials: true,
+        });
         setIsLoggedIn(true);
         fetchProducts();
+        fetchOrders();
       } catch (error) {
-        console.log(error)
+        console.log(error);
         setIsLoggedIn(false);
       } finally {
         setLoading(false);
@@ -46,7 +60,11 @@ const App = () => {
 
   const handleLogout = async () => {
     try {
-      await axios.post(backend_URL + "/api/auth/logout", {}, { withCredentials: true });
+      await axios.post(
+        backend_URL + "/api/auth/logout",
+        {},
+        { withCredentials: true }
+      );
       setIsLoggedIn(false);
       setProducts([]); // Clear products on logout
       navigate("/"); // Navigate to login page
@@ -70,10 +88,12 @@ const App = () => {
       <ToastContainer />
       {!isLoggedIn ? (
         // Pass a function that also fetches products after setting login state
-        <Login setIsLoggedIn={() => {
-          setIsLoggedIn(true);
-          fetchProducts();
-        }} />
+        <Login
+          setIsLoggedIn={() => {
+            setIsLoggedIn(true);
+            fetchProducts();
+          }}
+        />
       ) : (
         <>
           <Navbar handleLogout={handleLogout} />
@@ -83,10 +103,14 @@ const App = () => {
             <div className="w-[70%] mx-auto ml-[max(5vw, 25px)] my-8 text-gray-600 text-base">
               <Routes>
                 {/* --- THIS IS THE FIX FOR REQUEST #2 --- */}
-                <Route path="/" element={<Home productCount={products.length} />} />
+                <Route
+                  path="/"
+                  element={<Home productCount={products.length} orderCount={orders.length} />}
+                />
                 <Route path="/add" element={<Add />} />
                 <Route path="/list" element={<List />} />
                 <Route path="/edit/:id" element={<Edit />} />
+                <Route path="/listOrders" element={<ListOrders />} />
               </Routes>
             </div>
           </div>
