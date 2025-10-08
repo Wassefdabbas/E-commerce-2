@@ -18,6 +18,7 @@ const List = () => {
       );
       if (response.data.products) {
         setList(response.data.products);
+        console.log("First product data:", response.data.products[0]);
       } else {
         toast.error(response.data.message || "Failed to fetch products");
       }
@@ -121,7 +122,7 @@ const List = () => {
                   {product.name}
                 </td>
                 <td className="px-5 py-3">
-                  {(product.offerPrice && product.offerStartDate < Date.now() && product.offerEndDate > Date.now()) ? (
+                  {(product.offerPrice && new Date(product.offerStartDate).getTime() <= Date.now() && new Date(product.offerEndDate).getTime() >= Date.now()) ? (
                     <div className="flex flex-col">
                       <span className="text-red-500 font-semibold">
                         ${product.offerPrice.toFixed(2)}
