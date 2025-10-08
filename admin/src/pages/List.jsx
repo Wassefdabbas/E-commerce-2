@@ -140,7 +140,7 @@ const List = () => {
                     : product.category}
                 </td>
                 <td className="px-5 py-3">
-                  {product.offer ? (
+                  {product.offerPrice && new Date(product.offerStartDate).getTime() <= Date.now() && new Date(product.offerEndDate).getTime() >= Date.now() ? (
                     <span className="bg-red-100 text-red-600 text-xs px-2 py-1 rounded-full font-medium">
                       {product.offer}%
                     </span>
@@ -208,7 +208,7 @@ const List = () => {
             </div>
             <div className="flex justify-between items-center text-sm">
               <div className="text-gray-700">
-                {product.offerPrice ? (
+                  {product.offerPrice && new Date(product.offerStartDate).getTime() <= Date.now() && new Date(product.offerEndDate).getTime() >= Date.now() ? (
                   <div className="flex flex-col">
                     <span className="text-red-500 font-semibold">
                       ${product.offerPrice.toFixed(2)}
@@ -222,7 +222,7 @@ const List = () => {
                 )}
               </div>
               <div className="text-gray-600">
-                {product.offer ? (
+                  {product.offerPrice && new Date(product.offerStartDate).getTime() <= Date.now() && new Date(product.offerEndDate).getTime() >= Date.now() ? (
                   <span className="bg-red-100 text-red-600 text-xs px-2 py-1 rounded-full font-medium">
                     {product.offer}%
                   </span>
@@ -290,14 +290,3 @@ const Spinner = () => (
 );
 
 export default List;
-
-{
-  /* <td className="px-4 py-3 text-gray-700">
-
-</td>
-
-
-<td className="px-4 py-3 text-gray-600">
-
-</td> */
-}
