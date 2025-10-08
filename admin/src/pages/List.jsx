@@ -121,7 +121,7 @@ const List = () => {
                   {product.name}
                 </td>
                 <td className="px-5 py-3">
-                  {(product.offerPrice && product.offerStartDate <= Date.now() && product.offerEndDate >= Date.now()) ? (
+                  {(product.offerPrice && product.offerStartDate < Date.now() && product.offerEndDate > Date.now()) ? (
                     <div className="flex flex-col">
                       <span className="text-red-500 font-semibold">
                         ${product.offerPrice.toFixed(2)}
