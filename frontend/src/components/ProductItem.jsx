@@ -17,7 +17,7 @@ const ProductItem = ({
   offerEndDate,
 }) => {
   const imgSrc = Array.isArray(image) ? image : image;
-  const isOnOffer = Number(offer) > 0 && Number(offerPrice) > 0;
+  const isOnOffer = Number(offer) > 0 && Number(offerPrice) > 0 && new Date(offerStartDate).getTime() <= Date.now() && new Date(offerEndDate).getTime() >= Date.now();
   const { favoriteItems, toggleFavorite } = useContext(ShopContext);
 
   const isFavorite = favoriteItems.includes(id);
