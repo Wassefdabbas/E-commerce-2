@@ -62,7 +62,15 @@ const Collections = () => {
     }
 
     if (offerOnly) {
-      list = list.filter((p) => Boolean(p.offer && p.offer > 0 && new Date(p.offerStartDate).getTime() <= Date.now() && new Date(p.offerEndDate).getTime() >= Date.now()) || Boolean(p.offerPrice && p.offerPrice < (p.price || 0)));
+      list = list.filter(
+        (p) =>
+          Boolean(
+            p.offer &&
+              p.offer > 0 &&
+              new Date(p.offerStartDate).getTime() <= Date.now() &&
+              new Date(p.offerEndDate).getTime() >= Date.now()
+          ) || Boolean(p.offerPrice && p.offerPrice < (p.price || 0))
+      );
     }
 
     if (sortBy === "price_low_high") {
@@ -83,11 +91,16 @@ const Collections = () => {
 
     if (showSearch && search.trim() !== "") {
       const q = search.toLowerCase();
-      list = list.filter(p =>
-        (p.name || "").toLowerCase().includes(q) ||
-        [].concat(p.category || []).some(c => c.toLowerCase().includes(q)) ||
-        [].concat(p.ageCategory || []).some(ac => ac.toLowerCase().includes(q)) ||
-        [].concat(p.tags || []).some(tag => tag.toLowerCase().includes(q))
+      list = list.filter(
+        (p) =>
+          (p.name || "").toLowerCase().includes(q) ||
+          []
+            .concat(p.category || [])
+            .some((c) => c.toLowerCase().includes(q)) ||
+          []
+            .concat(p.ageCategory || [])
+            .some((ac) => ac.toLowerCase().includes(q)) ||
+          [].concat(p.tags || []).some((tag) => tag.toLowerCase().includes(q))
       );
     }
 
@@ -114,33 +127,47 @@ const Collections = () => {
           >
             <span>FILTERS</span>
             <img
-              className={`h-4 transition-transform lg:hidden ${showFilter ? "rotate-180" : ""}`}
+              className={`h-4 transition-transform lg:hidden ${
+                showFilter ? "rotate-180" : ""
+              }`}
               src={assets.dropdown_icon}
               alt="Toggle filters"
             />
           </button>
 
-          <div className={`lg:block ${showFilter ? 'block' : 'hidden'} space-y-6`}>
+          <div
+            className={`lg:block ${showFilter ? "block" : "hidden"} space-y-6`}
+          >
             {/* Offer Filter */}
             <div>
-              <h3 className="mb-2 text-sm font-semibold uppercase">Only Offers</h3>
+              <h3 className="mb-2 text-sm font-semibold uppercase">
+                Only Offers
+              </h3>
               <FilterButton
                 option="Show products on offer"
                 isSelected={offerOnly}
                 onToggle={() => setOfferOnly((v) => !v)}
               />
-            </div>  
+            </div>
 
             {/* Age Category Filter */}
             <div>
-              <h3 className="mb-2 text-sm font-semibold uppercase">Age Category</h3>
+              <h3 className="mb-2 text-sm font-semibold uppercase">
+                Age Category
+              </h3>
               <div className="flex flex-wrap gap-2">
                 {AGE_CATEGORY_OPTIONS.map((option) => (
                   <FilterButton
                     key={option}
                     option={option}
                     isSelected={selectedAgeCategories.has(option)}
-                    onToggle={() => toggleSetValue(setSelectedAgeCategories, selectedAgeCategories, option)}
+                    onToggle={() =>
+                      toggleSetValue(
+                        setSelectedAgeCategories,
+                        selectedAgeCategories,
+                        option
+                      )
+                    }
                   />
                 ))}
               </div>
@@ -155,7 +182,13 @@ const Collections = () => {
                     key={option}
                     option={option}
                     isSelected={selectedCategories.has(option)}
-                    onToggle={() => toggleSetValue(setSelectedCategories, selectedCategories, option)}
+                    onToggle={() =>
+                      toggleSetValue(
+                        setSelectedCategories,
+                        selectedCategories,
+                        option
+                      )
+                    }
                   />
                 ))}
               </div>
@@ -170,7 +203,9 @@ const Collections = () => {
                     key={option}
                     option={option}
                     isSelected={selectedSizes.has(option)}
-                    onToggle={() => toggleSetValue(setSelectedSizes, selectedSizes, option)}
+                    onToggle={() =>
+                      toggleSetValue(setSelectedSizes, selectedSizes, option)
+                    }
                   />
                 ))}
               </div>
