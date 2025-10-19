@@ -62,7 +62,7 @@ const Collections = () => {
     }
 
     if (offerOnly) {
-      list = list.filter((p) => Boolean(p.offer && p.offer > 0) || Boolean(p.offerPrice && p.offerPrice < (p.price || 0)));
+      list = list.filter((p) => Boolean(p.offer && p.offer > 0 && new Date(p.offerStartDate).getTime() <= Date.now() && new Date(p.offerEndDate).getTime() >= Date.now()) || Boolean(p.offerPrice && p.offerPrice < (p.price || 0)));
     }
 
     if (sortBy === "price_low_high") {

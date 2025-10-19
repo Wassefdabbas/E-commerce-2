@@ -11,7 +11,7 @@ const Cart = () => {
     removeItemFromCart, isProductOnOffer, getTotalAmount, navigate,
   } = useContext(ShopContext);
 
-  const cartList = useMemo(() => 
+  const cartList = useMemo(() =>
     Object.entries(cartItems).flatMap(([productId, sizes]) => {
       const product = products.find((p) => String(p._id) === productId);
       if (!product) return [];

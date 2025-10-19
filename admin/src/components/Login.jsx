@@ -73,7 +73,7 @@ const Login = ({setIsLoggedIn}) => {
                         </button>
                     </div>
 
-                    <button 
+                    <button
                         className='mt-4 w-full py-2 px-4 rounded-md text-white bg-black font-semibold hover:bg-gray-800 transition-colors flex items-center justify-center disabled:bg-gray-500' 
                         type='submit'
                         disabled={isLoading} // Disable the button while loading
